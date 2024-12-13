@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { ApolloProvider } from "@apollo/client";
 import { client } from "./apolloClient";
-import FilmList from "./components/FilmList";
-import LanguageSwitcher from "./components/LanguageSwitcher";
+import FilmList from "./components/FilmList/FilmList";
+import LanguageSwitcher from "./components/LanguageSwitcher/LanguageSwitcher";
 import "./App.css";
 
 const App = () => {
-  const [language, setLanguage] = useState<string>("en");
+  const [language, setLanguage] = useState("en");
 
   const toggleLanguage = () => {
-    setLanguage(language === "en" ? "de" : "en");
+    setLanguage((prevLanguage) => (prevLanguage === "en" ? "de" : "en"));
   };
 
   return (
@@ -18,7 +18,7 @@ const App = () => {
         <h1>{language === "en" ? "Star Wars Films" : "Star Wars Filme"}</h1>
         <FilmList language={language} />
         <LanguageSwitcher language={language} toggleLanguage={toggleLanguage} />
-      </div>
+        </div>
     </ApolloProvider>
   );
 };

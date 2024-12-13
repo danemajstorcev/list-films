@@ -1,76 +1,9 @@
 .app {
   font-family: Arial, sans-serif;
   padding: 20px;
-}
-
-.filters {
-  margin-bottom: 20px;
-}
-
-.filters input,
-.filters select {
-  margin-right: 10px;
-  padding: 5px;
-}
-
-.film-item {
-  margin-bottom: 20px;
-  border: 1px solid #ccc;
-  padding: 10px;
-}
-
-.language-switcher {
-  margin-top: 20px;
-  text-align: center;
-}
-
-.language-switcher button {
-  padding: 5px 10px;
-  cursor: pointer;
-}
-
-ul {
-  list-style: none;
-}
-
-.filters,
-.sorting {
-  margin-bottom: 20px;
   display: flex;
-  gap: 10px;
-}
-
-.filters input,
-.sorting select {
-  padding: 5px 10px;
-  font-size: 14px;
-}
-
-.pagination {
-  margin: 20px 0;
-  display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 10px;
 }
 
-.pagination button {
-  padding: 5px 10px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.pagination button:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-
-.pagination span {
-  font-size: 16px;
-}
-
-
-footer {
-  margin-top: 20px;
-  text-align: center;
-}
