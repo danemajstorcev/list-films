@@ -1,93 +1,126 @@
-import React, { useState } from "react";
+
+import  { useState } from "react";
 import { useQuery } from "@apollo/client";
 import { GET_FILMS } from "../apolloClient";
+import "./FilmLists.css";
 
 interface Film {
   id: string;
   title: string;
-  episodeID: number;
   director: string;
-  producers: string[];
   releaseDate: string;
 }
 
-interface FilmListProps {
-  language: string;
-}
+const FilmList = ({ language }: { language: string }) => {
+  const { data, loading, error } = useQuery(GET_FILMS);
+  const [directorFilter, setDirectorFilter] = useState<string>("");
+  const [releaseYearFilter, setReleaseYearFilter] = useState<string>("");
+  const [sortKey, setSortKey] = useState<string>("title");
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const itemsPerPage = 2;
 
-const FilmList: React.FC<FilmListProps> = ({ language }) => {
-  const { loading, error, data } = useQuery(GET_FILMS);
-  const [filteredDirector, setFilteredDirector] = useState<string>("");
-  const [filteredYear, setFilteredYear] = useState<number | null>(null);
-  const [sortBy, setSortBy] = useState<string>("title");
+  if (loading) return <p>{language === "en" ? "Loading..." : "Lädt..."}</p>;
+  if (error) return <p>{language === "en" ? "Error!" : "Fehler!"}</p>;
 
-  if (loading) return <p>{language === "en" ? "Loading..." : "Laden..."}</p>;
-  if (error) return <p>{language === "en" ? `Error: ${error.message}` : `Fehler: ${error.message}`}</p>;
+  const films: Film[] = data.allFilms.films;
 
-  const films = data?.allFilms?.films || [];
+  // Get unique directors and release years for filters
+  const uniqueDirectors = Array.from(new Set(films.map((film) => film.director)));
+  const uniqueReleaseYears = Array.from(new Set(films.map((film) => new Date(film.releaseDate).getFullYear()))).sort();
 
-  const filterFilms = films
-    .filter((film: Film) => {
-      return (
-        (filteredDirector ? film.director.toLowerCase().includes(filteredDirector.toLowerCase()) : true) &&
-        (filteredYear ? new Date(film.releaseDate).getFullYear() === filteredYear : true)
-      );
-    })
-    .sort((a: Film, b: Film) => {
-      if (sortBy === "title") return a.title.localeCompare(b.title);
-      return new Date(a.releaseDate).getTime() - new Date(b.releaseDate).getTime();
-    });
+  // Filter films by director and release year
+  const filteredFilms = films.filter((film) => {
+    const matchesDirector = directorFilter ? film.director === directorFilter : true;
+    const matchesYear = releaseYearFilter ? new Date(film.releaseDate).getFullYear().toString() === releaseYearFilter : true;
+    return matchesDirector && matchesYear;
+  });
 
-  const handleDirectorFilter = (e: React.ChangeEvent<HTMLInputElement>) => setFilteredDirector(e.target.value);
-  const handleYearFilter = (e: React.ChangeEvent<HTMLInputElement>) => setFilteredYear(Number(e.target.value));
+  // Sort films
+  filteredFilms.sort((a, b) => {
+    if (sortKey === "title") return a.title.localeCompare(b.title);
+    if (sortKey === "releaseDate") return new Date(a.releaseDate).getTime() - new Date(b.releaseDate).getTime();
+    return 0;
+  });
+
+  // Paginate films
+  const totalPages = Math.ceil(filteredFilms.length / itemsPerPage);
+  const paginatedFilms = filteredFilms.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  const handlePageChange = (direction: string) => {
+    if (direction === "prev" && currentPage > 1) setCurrentPage(currentPage - 1);
+    if (direction === "next" && currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
 
   return (
-    <div>
+    <div className="film-list">
       <div className="filters">
-        <input
-          type="text"
-          placeholder={language === "en" ? "Filter by Director..." : "Filtern nach Regisseur..."}
-          value={filteredDirector}
-          onChange={handleDirectorFilter}
-        />
-        <input
-          type="number"
-          placeholder={language === "en" ? "Filter by Year..." : "Filtern nach Jahr..."}
-          value={filteredYear || ""}
-          onChange={handleYearFilter}
-        />
-        <select onChange={(e) => setSortBy(e.target.value)} value={sortBy}>
-          <option value="title">{language === "en" ? "Sort by Title" : "Sortieren nach Titel"}</option>
-          <option value="releaseDate">{language === "en" ? "Sort by Release Date" : "Sortieren nach Veröffentlichungsdatum"}</option>
-        </select>
+        <label>
+          {language === "en" ? "Filter by Director:" : "Nach Regisseur filtern:"}
+          <select value={directorFilter} onChange={(e) => setDirectorFilter(e.target.value)}>
+            <option value="">{language === "en" ? "All" : "Alle"}</option>
+            {uniqueDirectors.map((director) => (
+              <option key={director} value={director}>
+                {director}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label>
+          {language === "en" ? "Filter by Release Year:" : "Nach Erscheinungsjahr filtern:"}
+          <select value={releaseYearFilter} onChange={(e) => setReleaseYearFilter(e.target.value)}>
+            <option value="">{language === "en" ? "All" : "Alle"}</option>
+            {uniqueReleaseYears.map((year) => (
+              <option key={year} value={year.toString()}>
+                {year}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label>
+          {language === "en" ? "Sort by:" : "Sortieren nach:"}
+          <select value={sortKey} onChange={(e) => setSortKey(e.target.value)}>
+            <option value="title">{language === "en" ? "Title" : "Titel"}</option>
+            <option value="releaseDate">{language === "en" ? "Release Date" : "Erscheinungsdatum"}</option>
+          </select>
+        </label>
       </div>
 
-      <ul>
-        {filterFilms.map((film: Film) => (
-          <li key={film.id} className="film-item">
+      <div className="film-cards">
+        {paginatedFilms.map((film) => (
+          <div key={film.id} className="film-card">
             <h3>{film.title}</h3>
             <p>
-              <strong>{language === "en" ? "Episode ID:" : "Episoden ID:"} </strong>{film.episodeID}
+              <strong>{language === "en" ? "Director" : "Regisseur"}:</strong> {film.director}
             </p>
             <p>
-              <strong>{language === "en" ? "Director:" : "Regisseur:"} </strong>{film.director}
-            </p>
-            <p>
-              <strong>{language === "en" ? "Producers:" : "Produzenten:"} </strong>{film.producers.join(", ")}
-            </p>
-            <p>
-              <strong>{language === "en" ? "Release Date:" : "Veröffentlichungsdatum:"} </strong>
-              {new Date(film.releaseDate).toLocaleDateString(language === "en" ? "en-US" : "de-DE", {
+              <strong>{language === "en" ? "Release Date" : "Erscheinungsdatum"}:</strong>{" "}
+              {new Date(film.releaseDate).toLocaleDateString(language, {
                 year: "numeric",
                 month: "long",
                 day: "numeric",
               })}
             </p>
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
+
+      <div className="pagination">
+        <button onClick={() => handlePageChange("prev")} disabled={currentPage === 1}>
+          {language === "en" ? "Previous" : "Vorherige"}
+        </button>
+        <span>
+          {language === "en" ? "Page" : "Seite"} {currentPage} {language === "en" ? "of" : "von"} {totalPages}
+        </span>
+        <button onClick={() => handlePageChange("next")} disabled={currentPage === totalPages}>
+          {language === "en" ? "Next" : "Nächste"}
+        </button>
+      </div>
     </div>
   );
 };
 
 export default FilmList;
+
+

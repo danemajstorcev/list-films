@@ -16,8 +16,8 @@ const App = () => {
     <ApolloProvider client={client}>
       <div className="app">
         <h1>{language === "en" ? "Star Wars Films" : "Star Wars Filme"}</h1>
-        <LanguageSwitcher language={language} toggleLanguage={toggleLanguage} />
         <FilmList language={language} />
+        <LanguageSwitcher language={language} toggleLanguage={toggleLanguage} />
       </div>
     </ApolloProvider>
   );
