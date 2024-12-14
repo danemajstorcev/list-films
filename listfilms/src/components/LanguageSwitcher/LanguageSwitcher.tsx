@@ -1,16 +1,28 @@
 import "./LanguageSwitcher.css";
 import { LanguageSwitcherProps } from "../../interfaces/interfaces";
+import { TRANSLATION } from "../../constants/contstants";
 
-const LanguageSwitcher = ({ language, toggleLanguage }: LanguageSwitcherProps) => {
+const LanguageSwitcher = ({
+  language,
+  toggleLanguage,
+}: LanguageSwitcherProps) => {
   return (
     <footer className="language-switcher">
       <button onClick={toggleLanguage}>
         <span>
-          {language === "en" ? "Switch to German" : "Wechseln zu Englisch"}
+          {language === "en"
+            ? `${TRANSLATION.en.switchToGerman}`
+            : `${TRANSLATION.de.switchToEnglish}`}
         </span>
         <img
-          src={language === "en" ? "/german.png" : "/uk.png"}
-          alt={language === "en" ? "German Flag" : "UK Flag"}
+          src={
+            language === "en" ? `${TRANSLATION.en.germanFlag}` : `${TRANSLATION.de.ukFlag}`
+          }
+          alt={
+            language === "en"
+              ? `${TRANSLATION.en.germanFlagAlt}`
+              : `${TRANSLATION.de.ukFlagAlt}`
+          }
           className="mini-flag"
         />
       </button>
