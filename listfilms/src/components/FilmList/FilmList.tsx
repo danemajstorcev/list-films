@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useQuery } from "@apollo/client";
 import { GET_FILMS } from "../../apolloClient";
-import "./FilmList.css";
 import FilmCard from "../FilmCard/FilmCard";
 import { Film, FilmListProps } from "../../interfaces/interfaces";
 import { TRANSLATION } from "../../constants/contstants";
+import "./FilmList.scss";
+import Spinner from "../Spinner/Spinner";
 
 const FilmList = ({ language }: FilmListProps) => {
   const { data, loading, error } = useQuery(GET_FILMS);
@@ -16,11 +17,8 @@ const FilmList = ({ language }: FilmListProps) => {
 
   if (loading)
     return (
-      <p>
-        {language === "en"
-          ? `${TRANSLATION.en.loading}`
-          : `${TRANSLATION.de.loading}`}
-      </p>
+   
+      <Spinner />
     );
   if (error)
     return (
@@ -125,8 +123,8 @@ const FilmList = ({ language }: FilmListProps) => {
           <select value={sortKey} onChange={(e) => setSortKey(e.target.value)}>
             <option value="title">
               {language === "en"
-                ? `${TRANSLATION.en.title}`
-                : `${TRANSLATION.de.title}`}
+                ? `${TRANSLATION.en.titleLabel}`
+                : `${TRANSLATION.de.titleLabel}`}
             </option>
             <option value="releaseDate">
               {language === "en"

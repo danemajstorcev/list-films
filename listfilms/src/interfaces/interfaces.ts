@@ -6,7 +6,7 @@ export interface LanguageSwitcherProps {
 export interface Film {
   id: string;
   title: string;
-  episodeID: number; 
+  episodeID: number;
   director: string;
   producers: string[];
   releaseDate: string;

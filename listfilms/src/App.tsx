@@ -4,7 +4,7 @@ import { client } from "./apolloClient";
 import FilmList from "./components/FilmList/FilmList";
 import LanguageSwitcher from "./components/LanguageSwitcher/LanguageSwitcher";
 import { TRANSLATION } from "./constants/contstants";
-import "./App.css";
+import "./App.scss";
 
 const App = () => {
   const [language, setLanguage] = useState("en");

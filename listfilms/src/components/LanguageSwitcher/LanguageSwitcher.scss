@@ -1,0 +1,16 @@
+.language-switcher {
+  margin-top: 80px;
+  text-align: center;
+
+  button {
+    font-family: "Orbitron", sans-serif;
+
+    padding: 5px 10px;
+    cursor: pointer;
+
+    .mini-flag {
+      width: 20px;
+      height: 12px;
+    }
+  }
+}

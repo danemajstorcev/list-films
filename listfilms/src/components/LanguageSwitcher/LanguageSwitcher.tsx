@@ -1,6 +1,6 @@
-import "./LanguageSwitcher.css";
 import { LanguageSwitcherProps } from "../../interfaces/interfaces";
 import { TRANSLATION } from "../../constants/contstants";
+import "./LanguageSwitcher.scss";
 
 const LanguageSwitcher = ({
   language,

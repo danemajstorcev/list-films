@@ -1,6 +1,6 @@
 import { TRANSLATION } from "../../constants/contstants";
 import { FilmCardProps } from "../../interfaces/interfaces";
-import "./FilmCard.css";
+import "./FilmCard.scss";
 
 const FilmCard = ({ film, language }: FilmCardProps) => {
   return (
