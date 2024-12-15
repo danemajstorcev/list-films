@@ -15,11 +15,7 @@ const FilmList = ({ language }: FilmListProps) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 2;
 
-  if (loading)
-    return (
-   
-      <Spinner />
-    );
+  if (loading) return <Spinner />;
   if (error)
     return (
       <p>
